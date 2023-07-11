@@ -15,6 +15,7 @@ matplotlib = "^3.7.1"
 jpype1 = "^1.4.1"
 fastapi = "^0.98.0"
 uvicorn = "^0.22.0"
+python-multipart = "^0.0.6"
 
 
 [build-system]
