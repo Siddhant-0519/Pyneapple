@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "pyneapple-v2"
+version = "0.1.0"
+description = ""
+authors = ["siddhant0519"]
+readme = "README.md"
+packages = [{include = "pyneapple_v2"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.25.1"
+geopandas = "^0.13.2"
+pandas = "^2.0.3"
+libpysal = "^4.7.0"
+matplotlib = "^3.7.2"
+JPype1 = "^1.4.1"
+fastapi = "^0.100.0"
+uvicorn = "^0.23.1"
+python-multipart = "^0.0.6"
+spopt = "^0.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
