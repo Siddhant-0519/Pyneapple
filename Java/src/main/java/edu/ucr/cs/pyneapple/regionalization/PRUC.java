@@ -6,6 +6,9 @@ import edu.ucr.cs.pyneapple.utils.PRUCUtils.*;
 
 import java.util.*;
 
+/**
+ * The PRUC problem is a generalized version for the p-regions problem
+ */
 public class PRUC implements RegionalizationMethod{
 
     private double heterogeneity = -1;
@@ -13,15 +16,19 @@ public class PRUC implements RegionalizationMethod{
 
     private int p = 0;
 
-    public static void main(String args[]) throws InterruptedException, CloneNotSupportedException {
-        new PRUC().Test_module();
 
-        //System.out.println(new Random(2023117).nextDouble());
-    }
 
+    /**
+     * The default constructor
+     */
     public PRUC(){ }
 
 
+    /**
+     * test a manually constructed case
+     * @throws InterruptedException multi-threading environment
+     * @throws CloneNotSupportedException cloning the areas
+     */
     public void Test_module() throws InterruptedException, CloneNotSupportedException {
 
         int p = 10;
@@ -96,7 +103,15 @@ public class PRUC implements RegionalizationMethod{
             centroids.add(centroid_xy);
         }
 
-        Object[] ret = execute_regionalization(neighborSet , disAttr , sumAttr , centroids, (long)threshold , p);
+        ArrayList<Double> centroids_x = new ArrayList<>();
+        ArrayList<Double> centroids_y = new ArrayList<>();
+        for(int i = 0 ; i < centroids.size() ; i++)
+        {
+            centroids_x.add(centroids.get(i)[0]);
+            centroids_y.add(centroids.get(i)[1]);
+        }
+
+        Object[] ret = execute_regionalization(neighborSet , disAttr , sumAttr , centroids_x, centroids_y, (long)threshold , p);
         double het = (Double)ret[0];
         ArrayList<Integer> label = (ArrayList<Integer>) ret[1];
         System.out.println("the het is " + het);
@@ -108,6 +123,11 @@ public class PRUC implements RegionalizationMethod{
     }
 
 
+    /**
+     * Examine whether the neighborhood relationship of areas is computed correctly
+     * @param neighborSet the neighboring set
+     * @return whether the neighborhood relationship if areas is computed correctly
+     */
     public boolean exam_neighborhood(Map<Integer, Set<Integer>> neighborSet) {
         if(neighborSet == null) {
             System.out.println("neighborSet is null");
@@ -143,6 +163,11 @@ public class PRUC implements RegionalizationMethod{
         return true;
     }
 
+    /**
+     * Exam if the heterogeneity of the region is computed correctly
+     * @param distAttr the list of similarity attribute
+     * @return whether the regional heterogeneity is correctly computed
+     */
     public boolean exam_disAttr(ArrayList<Long> distAttr)
     {
         if(distAttr == null)
@@ -161,6 +186,11 @@ public class PRUC implements RegionalizationMethod{
         return true;
     }
 
+    /**
+     * Exam if the extensive attribute of the region is computed correctly
+     * @param sumAttr the list of extensive attribute
+     * @return whether the regional extensive attribute is correctly computed
+     */
     public boolean exam_sumAttr(ArrayList<Long> sumAttr)
     {
         if(sumAttr == null)
@@ -185,14 +215,15 @@ public class PRUC implements RegionalizationMethod{
      * @param neighborSet the neighborhood relationship of the areas
      * @param disAttr the list of similarity attribtues
      * @param sumAttr the list of extensive attributes
-     * @param centroids the list of centroids of the areas
+     * @param centroids_x the list of centroids latitudes of the areas
+     * @param centroids_y the list of centroids longitudes of the areas
      * @param threshold the threshold on the constraint
      * @param p the predefined number of regions
      * @return the heterogeneity and labels of the partition and areas if a feasible partition is found or null if a feasible partition is not found
-     * @throws InterruptedException
-     * @throws CloneNotSupportedException
+     * @throws InterruptedException multi-threading environment
+     * @throws CloneNotSupportedException cloneing the set of areas
      */
-    public Object[] execute_regionalization(Map<Integer, Set<Integer>> neighborSet, ArrayList<Long> disAttr, ArrayList<Long> sumAttr,  ArrayList<double[]> centroids, long threshold, int p) throws InterruptedException, CloneNotSupportedException {
+    public Object[] execute_regionalization(Map<Integer, Set<Integer>> neighborSet, ArrayList<Long> disAttr, ArrayList<Long> sumAttr,  ArrayList<Double> centroids_x, ArrayList<Double> centroids_y, long threshold, int p) throws InterruptedException, CloneNotSupportedException {
 
         boolean issue = exam_neighborhood(neighborSet) && exam_disAttr(disAttr) && exam_sumAttr(sumAttr);
 
@@ -218,7 +249,7 @@ public class PRUC implements RegionalizationMethod{
         int size = sumAttr.size();
         for(int i = 0 ; i < size ; i++)
         {
-            Area a = new Area(i , disAttr.get(i) , sumAttr.get(i) , new double[]{centroids.get(i)[0] , centroids.get(i)[1]});
+            Area a = new Area(i , disAttr.get(i) , sumAttr.get(i) , new double[]{centroids_x.get(i) , centroids_y.get(i)});
 			ArrayList<Integer> neigh_list;
             if(neighborSet.containsKey(i))
 			{
@@ -291,7 +322,7 @@ public class PRUC implements RegionalizationMethod{
 
 
     /**
-     *
+     * get the heterogeneity of all regions
      * @return the heterogeneity of the region
      */
     public double getHeterogeneity()
